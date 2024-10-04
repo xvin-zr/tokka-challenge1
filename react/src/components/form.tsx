@@ -16,10 +16,15 @@ function Form() {
       <form
         onSubmit={(e) => {
           const start =
-            date?.from?.getTime() ?? Date.now() - 1000 * 60 * 60 * 24 * 30;
-          const end = date?.to?.getTime() ?? Date.now();
+            (date?.from?.getTime() ?? Date.now() - 1000 * 60 * 60 * 24 * 30) /
+            1000;
+          const end = (date?.to?.getTime() ?? Date.now()) / 1000;
           e.preventDefault();
-          history.pushState(null, '', `?start=${start}&end=${end}`);
+          history.pushState(
+            null,
+            '',
+            `?start=${Math.floor(start)}&end=${Math.floor(end)}`,
+          );
         }}
       >
         <div className="grid max-w-full items-center gap-4">
