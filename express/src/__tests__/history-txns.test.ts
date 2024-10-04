@@ -51,7 +51,7 @@ describe('HistoryTxns API Endpoints', async () => {
             expect(response.status).toBe(400);
             expect(response.body).toHaveProperty(
                 'error',
-                "'start' timestamp must be less than 'end' timestamp."
+                "'start' timestamp must be less than 'end' timestamp.",
             );
         });
     });

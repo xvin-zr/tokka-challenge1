@@ -17,7 +17,7 @@ export default async function fetchRealtimeTxns() {
     try {
         // Fetch the latest block number from the API
         const latestBlockResp = await fetch(
-            `https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${ETHERSCAN_API_KEY}`
+            `https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${ETHERSCAN_API_KEY}`,
         ).then((res) => res.json());
         const latestBlock = parseInt(latestBlockResp.result, 16) || 3000_0000;
         console.log({ latestBlock });
@@ -27,9 +27,9 @@ export default async function fetchRealtimeTxns() {
             Number(
                 db
                     .prepare(
-                        'SELECT blockNumber FROM transactions ORDER BY blockNumber DESC LIMIT 1'
+                        'SELECT blockNumber FROM transactions ORDER BY blockNumber DESC LIMIT 1',
                     )
-                    .get()
+                    .get(),
             ) || 20886038;
         console.log({ lastBlock });
 
@@ -39,7 +39,7 @@ export default async function fetchRealtimeTxns() {
             const transactionResp = await fetch(
                 `https://api.etherscan.io/api?module=account&action=tokentx&address=${USDC_ETH_POOL_ADDRESS}&page=${currentPage}&offset=${offset}&startblock=${
                     lastBlock ?? latestBlock - 99
-                }&endblock=${latestBlock}&sort=desc&apikey=${ETHERSCAN_API_KEY}`
+                }&endblock=${latestBlock}&sort=desc&apikey=${ETHERSCAN_API_KEY}`,
             ).then((res) => res.json());
 
             // Check if there are no more transactions to fetch
@@ -51,7 +51,7 @@ export default async function fetchRealtimeTxns() {
             const transactions: TxnAPI[] = transactionResp.result;
 
             console.log(
-                `Fetched ${transactions.length} transactions from page ${currentPage}.`
+                `Fetched ${transactions.length} transactions from page ${currentPage}.`,
             );
 
             // Process and store each transaction
@@ -70,7 +70,7 @@ export default async function fetchRealtimeTxns() {
 
                     // Insert the transaction into the database if it doesn't already exist
                     db.prepare(
-                        'INSERT OR IGNORE INTO transactions VALUES (@hash, @blockNumber, @timeStamp, @feeInUSDT, @feeInETH, @eth_to_usdt_rate)'
+                        'INSERT OR IGNORE INTO transactions VALUES (@hash, @blockNumber, @timeStamp, @feeInUSDT, @feeInETH, @eth_to_usdt_rate)',
                     ).run(newTxn);
                 } catch (err) {
                     throw new Error(`Error calculating fee\n${err}`);

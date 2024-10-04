@@ -1,4 +1,4 @@
-import db from "../src/db";
+import db from '../src/db';
 
 // db.exec(`DROP TABLE IF EXISTS transactions;`);
 // db.exec(`CREATE TABLE IF NOT EXISTS transactions (
@@ -10,4 +10,4 @@ import db from "../src/db";
 //   eth_to_usdt_rate REAL NOT NULL
 // );`);
 
-console.log(db.prepare(`SELECT * FROM transactions limit 10`).all())
+console.log(db.prepare(`SELECT * FROM transactions limit 10`).all());

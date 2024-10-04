@@ -8,7 +8,7 @@ describe('HistoryTxns API Endpoints', async () => {
 
         it('should fetch a transaction by its hash', async () => {
             const response = await request(app).get(
-                `/api/history-txns/${existingHash}`
+                `/api/history-txns/${existingHash}`,
             );
 
             expect(response.status).toBe(200);
@@ -27,13 +27,13 @@ describe('HistoryTxns API Endpoints', async () => {
                 '0xcccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc';
 
             const response = await request(app).get(
-                `/api/history-txns/${nonExistentHash}`
+                `/api/history-txns/${nonExistentHash}`,
             );
 
             expect(response.status).toBe(404);
             expect(response.body).toHaveProperty(
                 'error',
-                'Transaction not found'
+                'Transaction not found',
             );
         });
 
@@ -41,7 +41,7 @@ describe('HistoryTxns API Endpoints', async () => {
             const invalidHash = 'invalidhash123';
 
             const response = await request(app).get(
-                `/api/history-txns/${invalidHash}`
+                `/api/history-txns/${invalidHash}`,
             );
 
             expect(response.status).toBe(400);

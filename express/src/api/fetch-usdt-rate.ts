@@ -20,7 +20,7 @@ export default async function fetchUSDTRateAtTimestamp(timestamp: number) {
 
     try {
         const resp = await fetch(
-            `${BINANCE_API_URL}?symbol=ETHUSDT&interval=1m&startTime=${startTimeMs}&endTime=${endTimeMs}&limit=1`
+            `${BINANCE_API_URL}?symbol=ETHUSDT&interval=1m&startTime=${startTimeMs}&endTime=${endTimeMs}&limit=1`,
         ).then((res) => res.json());
 
         if (!resp || resp.length === 0) {
@@ -35,7 +35,7 @@ export default async function fetchUSDTRateAtTimestamp(timestamp: number) {
         return closePrice;
     } catch (err) {
         throw new Error(
-            `Failed to fetch ETH price at timestamp ${timestamp}\n\n${err}`
+            `Failed to fetch ETH price at timestamp ${timestamp}\n\n${err}`,
         );
     }
 }

@@ -58,7 +58,7 @@ router.get(
 
             // Get total count for pagination
             const countStmt = db.prepare(
-                `SELECT COUNT(*) as count FROM transactions WHERE timeStamp BETWEEN ? AND ?`
+                `SELECT COUNT(*) as count FROM transactions WHERE timeStamp BETWEEN ? AND ?`,
             );
             const count = countStmt.get(startTime, endTimeTs) as {
                 count: number;
@@ -83,7 +83,7 @@ router.get(
             console.error(`Error in /history-txns: ${err}`);
             res.status(500).json({ error: 'Internal Server Error' });
         }
-    }
+    },
 );
 
 router.get(
@@ -116,7 +116,7 @@ router.get(
             res.status(500).json({ error: 'Internal Server Error' });
             return;
         }
-    }
+    },
 );
 
 router.get(
@@ -133,14 +133,14 @@ router.get(
             const txns = await fetchBatchTxns(
                 parseInt(start),
                 parseInt(end),
-                page
+                page,
             );
 
             res.json({ txns });
         } catch (err) {
             res.status(500).json({ error: 'server error' });
         }
-    }
+    },
 );
 
 export default router;

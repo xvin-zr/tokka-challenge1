@@ -4,13 +4,13 @@ import db from '../db';
 export default async function fetchBatchTxns(
     start: number,
     end: number,
-    page = 1
+    page = 1,
 ) {
     const startBlock = await fetchBlockNumByTimestamp(start, 'after');
     const endBlock = await fetchBlockNumByTimestamp(end, 'before');
 
     console.log(
-        `Fetching transactions from block ${startBlock} to block ${endBlock}.`
+        `Fetching transactions from block ${startBlock} to block ${endBlock}.`,
     );
 
     const pageSize = 100; // Number of transactions per API call
@@ -29,7 +29,7 @@ export default async function fetchBatchTxns(
 
         const transactions: TxnAPI[] = resp.result;
         console.log(
-            `Fetched ${transactions.length} transactions from page ${page}.`
+            `Fetched ${transactions.length} transactions from page ${page}.`,
         );
 
         // Process transactions
@@ -45,11 +45,11 @@ export default async function fetchBatchTxns(
                 };
                 txns.push(newTxn);
                 db.prepare(
-                    'INSERT OR IGNORE INTO transactions VALUES (@hash, @blockNumber, @timeStamp, @feeInUSDT,@feeInEth, @eth_to_usdt_rate)'
+                    'INSERT OR IGNORE INTO transactions VALUES (@hash, @blockNumber, @timeStamp, @feeInUSDT,@feeInEth, @eth_to_usdt_rate)',
                 ).run(newTxn);
             } catch (error: any) {
                 console.error(
-                    `Error processing transaction ${txn.hash}: ${error.message}`
+                    `Error processing transaction ${txn.hash}: ${error.message}`,
                 );
                 // Optionally, continue with the next transaction
             }
@@ -67,7 +67,7 @@ export default async function fetchBatchTxns(
 
 async function fetchBlockNumByTimestamp(
     timestamp: number,
-    closest: 'before' | 'after' = 'before'
+    closest: 'before' | 'after' = 'before',
 ) {
     const url = `https://api.etherscan.io/api?module=block&action=getblocknobytime&timestamp=${timestamp}&closest=${closest}&apikey=${ETHERSCAN_API_KEY}`;
 
