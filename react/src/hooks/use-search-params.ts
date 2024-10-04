@@ -17,6 +17,7 @@ function useSearchParams() {
         return () => {
             window.removeEventListener('popstate', handleUrlChange);
             window.removeEventListener('pushState', handleUrlChange);
+            window.removeEventListener('locationchange', handleUrlChange);
         };
     }, []);
 

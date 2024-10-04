@@ -7,6 +7,7 @@ import { addDays } from 'date-fns';
 import { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import useSearchParams from '@/hooks/use-search-params';
+import { getTimestampInSec } from '@/utils/get-timestamp-in-sec';
 
 function Form() {
   const [date, setDate] = useState<DateRange | undefined>({
@@ -41,9 +42,8 @@ function Form() {
     e.preventDefault();
     console.log('Submitting form');
     const formData = new FormData(e.currentTarget);
-    const start =
-      (date?.from?.getTime() ?? Date.now() - 1000 * 60 * 60 * 24 * 30) / 1000;
-    const end = (date?.to?.getTime() ?? Date.now()) / 1000;
+    const start = getTimestampInSec(date?.from?.getTime());
+    const end = getTimestampInSec(date?.to?.getTime(), 'end');
     const pageSize = parseInt(formData.get('page-size') as string);
     const hash = formData.get('hash') || undefined;
     history.pushState(

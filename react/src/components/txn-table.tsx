@@ -8,15 +8,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useSearchParams from '@/hooks/use-search-params';
+import { getTimestampInSec } from '@/utils/get-timestamp-in-sec';
 import { useQuery } from '@tanstack/react-query';
 
 export default function TxnTable() {
   const params = useSearchParams();
-  const start =
-    parseInt(params.get('start') ?? '0') ||
-    Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
-  const end =
-    parseInt(params.get('end') ?? '0') || Math.floor(Date.now() / 1000);
+  const start = getTimestampInSec(params.get('start'));
+  const end = getTimestampInSec(params.get('end'), 'end');
   const page = parseInt(params.get('page') ?? '1');
   const pageSize = parseInt(params.get('pageSize') ?? '50');
   const hash = undefined;
