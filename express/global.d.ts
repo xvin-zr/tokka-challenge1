@@ -22,5 +22,6 @@ type TxnAPI = {
 
 type Txn = TxnAPI & {
     feeInUSDT: number;
+    feeInETH: number;
     eth_to_usdt_rate: number;
 };

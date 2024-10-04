@@ -1,4 +1,4 @@
-import { ETHERSCAN_API_KEY, USDC_ETH_POOL_ADDRESS } from '.';
+import { calcFeeInUSDT, ETHERSCAN_API_KEY, USDC_ETH_POOL_ADDRESS } from '.';
 import db from '../db';
 import fetchUSDTRateAtTimestamp from './fetch-usdt-rate';
 
@@ -19,17 +19,18 @@ export default async function fetchRealtimeTxns() {
         const latestBlockResp = await fetch(
             `https://api.etherscan.io/api?module=proxy&action=eth_blockNumber&apikey=${ETHERSCAN_API_KEY}`
         ).then((res) => res.json());
-        const latestBlock = parseInt(latestBlockResp.result, 16);
+        const latestBlock = parseInt(latestBlockResp.result, 16) || 3000_0000;
         console.log({ latestBlock });
 
         // Retrieve the last block number from the database
-        const lastBlock = Number(
-            db
-                .prepare(
-                    'SELECT blockNumber FROM transactions ORDER BY blockNumber DESC LIMIT 1'
-                )
-                .get()
-        );
+        const lastBlock =
+            Number(
+                db
+                    .prepare(
+                        'SELECT blockNumber FROM transactions ORDER BY blockNumber DESC LIMIT 1'
+                    )
+                    .get()
+            ) || 20886038;
         console.log({ lastBlock });
 
         let hasMore = true;
@@ -57,19 +58,19 @@ export default async function fetchRealtimeTxns() {
             for (const txn of transactions) {
                 try {
                     // Calculate fee in USDT and ETH to USDT rate
-                    const { feeInUSDT, eth_to_usdt_rate } = await calcFeeInUSDT(
-                        txn
-                    );
+                    const { feeInUSDT, feeInETH, eth_to_usdt_rate } =
+                        await calcFeeInUSDT(txn);
                     const newTxn: Txn = {
                         ...txn,
                         feeInUSDT,
+                        feeInETH,
                         eth_to_usdt_rate,
                     };
                     txns.push(newTxn);
 
                     // Insert the transaction into the database if it doesn't already exist
                     db.prepare(
-                        'INSERT OR IGNORE INTO transactions VALUES (@hash, @blockNumber, @timeStamp, @feeInUSDT, @eth_to_usdt_rate)'
+                        'INSERT OR IGNORE INTO transactions VALUES (@hash, @blockNumber, @timeStamp, @feeInUSDT, @feeInETH, @eth_to_usdt_rate)'
                     ).run(newTxn);
                 } catch (err) {
                     throw new Error(`Error calculating fee\n${err}`);
@@ -83,20 +84,9 @@ export default async function fetchRealtimeTxns() {
                 currentPage++;
             }
         }
+
+        return [latestBlock, txns] as const;
     } catch (err) {
         throw new Error(`Error fetching transaction: ${err}`);
     }
-}
-
-async function calcFeeInUSDT(txn: TxnAPI) {
-    const { gasPrice, gasUsed } = txn;
-    const timestamp = Number(txn.timeStamp);
-    const gasPriceInETH = parseInt(gasPrice, 10) / 1e18;
-    const gasUsedInETH = parseInt(gasUsed, 10) / 1e18;
-    const feeInETH = gasPriceInETH * gasUsedInETH * 1e18;
-
-    const eth_to_usdt_rate = await fetchUSDTRateAtTimestamp(timestamp);
-    const feeInUSDT = feeInETH * eth_to_usdt_rate;
-
-    return { feeInUSDT, eth_to_usdt_rate };
 }
