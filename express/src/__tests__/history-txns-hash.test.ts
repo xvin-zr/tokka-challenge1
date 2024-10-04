@@ -14,7 +14,7 @@ describe('HistoryTxns API Endpoints', async () => {
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('data');
 
-            const txn = response.body.data;
+            const txn = response.body.data[0];
             expect(txn).toHaveProperty('hash', existingHash);
             expect(txn).toHaveProperty('blockNumber', '20890693');
             expect(txn).toHaveProperty('timeStamp', '1728027251');

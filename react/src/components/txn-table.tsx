@@ -12,13 +12,15 @@ import { getTimestampInSec } from '@/utils/get-timestamp-in-sec';
 import { useQuery } from '@tanstack/react-query';
 import Pagination from './pagination';
 
-export default function TxnTable() {
+type TxnTableProps = {
+  hash: string | undefined;
+};
+export default function TxnTable({ hash }: TxnTableProps) {
   const params = useSearchParams();
   const start = getTimestampInSec(params.get('start'));
   const end = getTimestampInSec(params.get('end'), 'end');
   const page = parseInt(params.get('page') ?? '1');
   const pageSize = parseInt(params.get('pageSize') ?? '50');
-  const hash = undefined;
 
   const { data, isPending } = useQuery({
     queryKey: ['txns', start, end, page, pageSize, hash],

@@ -109,7 +109,13 @@ router.get(
 
             // Structure the response
             res.status(200).json({
-                data: transactions,
+                data: [transactions],
+                pagination: {
+                    page: 1,
+                    pageSize: 1,
+                    total: 1,
+                    totalPages: 1,
+                },
             });
         } catch (err) {
             console.error(`Error in /history-txns/:hash: ${err}`);

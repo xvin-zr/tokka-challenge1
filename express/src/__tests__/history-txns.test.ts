@@ -29,14 +29,14 @@ describe('HistoryTxns API Endpoints', async () => {
             // Assuming you have enough seeded transactions, fetch the second page
             const response = await request(app)
                 .get('/api/history-txns')
-                .query({ page: 1, pageSize: 20 });
+                .query({ page: 3, pageSize: 20 });
 
             expect(response.status).toBe(200);
             expect(response.body).toHaveProperty('data');
             expect(response.body.data.length).toBe(20); // Page size is 20
 
             expect(response.body).toHaveProperty('pagination');
-            expect(response.body.pagination).toHaveProperty('page', 1);
+            expect(response.body.pagination).toHaveProperty('page', 3);
             expect(response.body.pagination).toHaveProperty('pageSize', 20);
         });
 

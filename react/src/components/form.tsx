@@ -9,7 +9,10 @@ import { DateRange } from 'react-day-picker';
 import useSearchParams from '@/hooks/use-search-params';
 import { getTimestampInSec } from '@/utils/get-timestamp-in-sec';
 
-function Form() {
+type FormProps = {
+  setHash: React.Dispatch<React.SetStateAction<string | undefined>>;
+};
+function Form({ setHash }: FormProps) {
   const [date, setDate] = useState<DateRange | undefined>({
     from: addDays(new Date(), -30),
     to: new Date(),
@@ -46,10 +49,11 @@ function Form() {
     const end = getTimestampInSec(date?.to?.getTime(), 'end');
     const pageSize = parseInt(formData.get('page-size') as string);
     const hash = formData.get('hash') || undefined;
+    setHash(hash as string | undefined);
     history.pushState(
       null,
       '',
-      `?start=${Math.floor(start)}&end=${Math.floor(end)}&page=${page}&pageSize=${pageSize}&hash=${hash ?? ''}`,
+      `?start=${Math.floor(start)}&end=${Math.floor(end)}&page=${page}&pageSize=${pageSize}`,
     );
     window.dispatchEvent(new Event('locationchange'));
     mutation.mutate({ start, end, page, pageSize, hash });
@@ -61,7 +65,7 @@ function Form() {
         <div className="grid max-w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="hash">Txn Hash</Label>
-            <Input id="hash" placeholder="Your Hash 0x" />
+            <Input id="hash" name="hash" placeholder="Your Hash 0x" />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="date-range">Date Range</Label>
