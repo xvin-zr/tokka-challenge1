@@ -14,22 +14,23 @@ export default function TxnTable() {
   const params = useSearchParams();
   const start =
     parseInt(params.get('start') ?? '0') ||
-    (Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000;
-  const end = parseInt(params.get('end') ?? '0') || Date.now() / 1000;
+    Math.floor((Date.now() - 30 * 24 * 60 * 60 * 1000) / 1000);
+  const end =
+    parseInt(params.get('end') ?? '0') || Math.floor(Date.now() / 1000);
   const page = parseInt(params.get('page') ?? '1');
   const pageSize = parseInt(params.get('pageSize') ?? '50');
   const hash = undefined;
 
   const { data, isPending } = useQuery({
     queryKey: ['txns', start, end, page, pageSize, hash],
-    queryFn: () => fetchTxns(start, end, pageSize),
+    queryFn: () => fetchTxns(start, end, page, pageSize, hash),
   });
 
   if (isPending) {
     return (
       <>
         <h2 className="text-xl font-bold">Transactions</h2>
-        <div>Loading...</div>;
+        <div>Loading...</div>
       </>
     );
   }
@@ -38,7 +39,7 @@ export default function TxnTable() {
     return (
       <>
         <h2 className="text-xl font-bold">Transactions</h2>
-        <div>No transactions found</div>;
+        <div>No transactions found</div>
       </>
     );
   }

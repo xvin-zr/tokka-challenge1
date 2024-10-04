@@ -12,6 +12,7 @@ function useSearchParams() {
 
         window.addEventListener('popstate', handleUrlChange);
         window.addEventListener('pushState', handleUrlChange);
+        window.addEventListener('locationchange', handleUrlChange);
 
         return () => {
             window.removeEventListener('popstate', handleUrlChange);
