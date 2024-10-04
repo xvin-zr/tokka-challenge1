@@ -1,4 +1,4 @@
-type Txn = {
+type TxnAPI = {
     blockNumber: string;
     timeStamp: string;
     hash: string;
@@ -18,4 +18,9 @@ type Txn = {
     cumulativeGasUsed: string;
     input: string;
     confirmations: string;
+};
+
+type Txn = TxnAPI & {
+    feeInUSDT: number;
+    eth_to_usdt_rate: number;
 };
