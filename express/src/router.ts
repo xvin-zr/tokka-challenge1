@@ -73,7 +73,7 @@ router.get(
                 data: transactions,
                 pagination: {
                     page,
-                    limit,
+                    pageSize: limit,
                     total,
                     totalPages: Math.ceil(total / limit),
                 },
