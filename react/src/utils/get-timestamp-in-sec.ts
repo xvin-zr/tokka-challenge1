@@ -8,12 +8,24 @@ export function getTimestampInSec(
         time = time ?? Date.now() - 30 * 24 * 60 * 60 * 1000;
     }
 
+    let timestamp: number;
+
     if (typeof time === 'number') {
-        return Math.floor(time / 1000);
+        timestamp = Math.floor(time / 1000);
+    } else if (typeof time === 'string') {
+        const parsed = parseInt(time, 10);
+        if (isNaN(parsed)) {
+            timestamp = Math.floor(Date.now() / 1000);
+        } else {
+            timestamp = Math.floor(parsed / 1000);
+        }
+    } else {
+        timestamp = Math.floor(Date.now() / 1000);
     }
-    if (typeof time === 'string') {
-        time = parseInt(time, 10);
-        return Math.floor(time / 1000);
+
+    if (type === 'end') {
+        timestamp += 24 * 60 * 60;
     }
-    return Math.floor(Date.now() / 1000);
+
+    return timestamp;
 }

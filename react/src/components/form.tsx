@@ -1,13 +1,11 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { addDays } from 'date-fns';
+import { useState } from 'react';
+import { DateRange } from 'react-day-picker';
+import { getTimestampInSec } from '../utils/get-timestamp-in-sec';
 import DatePickerWithRange from './date-picker-with-range';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { addDays } from 'date-fns';
-import { useState } from 'react';
-import { DateRange } from 'react-day-picker';
-import useSearchParams from '@/hooks/use-search-params';
-import { getTimestampInSec } from '@/utils/get-timestamp-in-sec';
 
 type FormProps = {
   setHash: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -16,29 +14,6 @@ function Form({ setHash }: FormProps) {
   const [date, setDate] = useState<DateRange | undefined>({
     from: addDays(new Date(), -30),
     to: new Date(),
-  });
-
-  const params = useSearchParams();
-  const page = parseInt(params.get('page') ?? '1');
-
-  const queryClient = useQueryClient();
-
-  const mutation = useMutation({
-    mutationFn: async (data: {
-      start: number;
-      end: number;
-      page: number;
-      pageSize: number;
-      hash: FormDataEntryValue | undefined;
-    }) => {
-      return data;
-    },
-    onSuccess: (variables) => {
-      const { start, end, page, pageSize, hash } = variables;
-      queryClient.invalidateQueries({
-        queryKey: ['txns', start, end, page, pageSize, hash],
-      });
-    },
   });
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -53,10 +28,10 @@ function Form({ setHash }: FormProps) {
     history.pushState(
       null,
       '',
-      `?start=${Math.floor(start)}&end=${Math.floor(end)}&page=${page}&pageSize=${pageSize}`,
+      `?start=${Math.floor(start)}&end=${Math.floor(end)}&page=${1}&pageSize=${pageSize}`,
     );
     window.dispatchEvent(new Event('locationchange'));
-    mutation.mutate({ start, end, page, pageSize, hash });
+    // mutation.mutate({ start, end, page, pageSize, hash });
   }
 
   return (
@@ -65,7 +40,12 @@ function Form({ setHash }: FormProps) {
         <div className="grid max-w-full items-center gap-4">
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="hash">Txn Hash</Label>
-            <Input id="hash" name="hash" placeholder="Your Hash 0x" />
+            <Input
+              id="hash"
+              name="hash"
+              placeholder="Your Hash 0x with 64 characters"
+              pattern="^0x[a-fA-F0-9]{64}$"
+            />
           </div>
           <div className="flex flex-col space-y-1.5">
             <Label htmlFor="date-range">Date Range</Label>
