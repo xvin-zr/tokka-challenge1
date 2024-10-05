@@ -8,25 +8,39 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import useSearchParams from '@/hooks/use-search-params';
-import { useQuery } from '@tanstack/react-query';
+import { getParamsTimestamp } from '@/utils/get-timestamp-in-sec';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import Pagination from './pagination';
+import { useEffect } from 'react';
 
 type TxnTableProps = {
   hash: string | undefined;
+  setTotalETH: React.Dispatch<React.SetStateAction<number>>;
+  setTotalUSDT: React.Dispatch<React.SetStateAction<number>>;
 };
-export default function TxnTable({ hash }: TxnTableProps) {
+export default function TxnTable({
+  hash,
+  setTotalETH,
+  setTotalUSDT,
+}: TxnTableProps) {
   const params = useSearchParams();
-  const start =
-    Number(params.get('start') ?? 0) ||
-    Math.floor(Date.now() / 1000 - 30 * 24 * 60 * 60);
-  const end = Number(params.get('end') ?? 0) || Math.floor(Date.now() / 1000);
+  const { start, end } = getParamsTimestamp(
+    params.get('start'),
+    params.get('end'),
+  );
   const page = parseInt(params.get('page') ?? '1');
   const pageSize = parseInt(params.get('pageSize') ?? '50');
 
   const { data, isPending } = useQuery({
     queryKey: ['txns', start, end, page, pageSize, hash],
     queryFn: () => fetchTxns(start, end, page, pageSize, hash),
+    placeholderData: keepPreviousData,
   });
+
+  useEffect(() => {
+    setTotalETH(() => data?.totalETH ?? 0);
+    setTotalUSDT(() => data?.totalUSDT ?? 0);
+  }, [data?.totalETH, data?.totalUSDT, setTotalETH, setTotalUSDT]);
 
   if (isPending) {
     return (
@@ -48,8 +62,8 @@ export default function TxnTable({ hash }: TxnTableProps) {
 
   return (
     <>
-      <div className="flex w-full">
-        <h2 className="text-xl font-bold">Transactions</h2>
+      <div className="flex w-full justify-between">
+        <h2 className="text-xl font-bold">Transactions <span className='text-sm font-normal text-zinc-500 ml-4'>Found {data.total} records.</span></h2>
         <Pagination page={data.page} totalPages={data.totalPages} />
       </div>
       <Table>

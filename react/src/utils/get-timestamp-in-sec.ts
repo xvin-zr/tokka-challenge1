@@ -29,3 +29,18 @@ export function getTimestampInSec(
 
     return timestamp;
 }
+
+export function getParamsTimestamp(
+    startParam: string | null,
+    endParam: string | null,
+) {
+    const start =
+        Number(startParam ?? 0) ||
+        Math.floor(Date.now() / 1000 - 30 * 24 * 60 * 60);
+    const end = Number(endParam ?? 0) || Math.floor(Date.now() / 1000);
+
+    return {
+        start,
+        end,
+    };
+}

@@ -23,14 +23,21 @@ export default async function fetchTxns(
 
     const {
         data,
+        totalETH,
+        totalUSDT,
         pagination,
     }: {
         data: Txn[];
+        totalETH: number;
+        totalUSDT: number;
         pagination: Pagination;
     } = resp;
 
     return {
         txns: data,
+        totalETH,
+        totalUSDT,
+        total: pagination.total,
         page: pagination.page,
         totalPages: pagination.totalPages,
     };

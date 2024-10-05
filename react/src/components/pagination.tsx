@@ -11,7 +11,7 @@ function Pagination({ page, totalPages }: PaginationProps) {
   const queryClient = useQueryClient();
 
   return (
-    <div className="ml-auto flex items-center gap-4">
+    <div className="flex items-center gap-4 pr-4">
       <Button
         onClick={() => {
           queryClient.invalidateQueries({
