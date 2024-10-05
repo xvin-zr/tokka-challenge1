@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { param, query } from 'express-validator';
-import { validateInputErrors } from './middleware';
 import fetchBatchTxns from './api/fetch-batch-txns';
+import { BINANCE_API_URL } from './api/fetch-usdt-rate';
 import db from './db';
-import fetchUSDTRateAtTimestamp, { BINANCE_API_URL } from './api/fetch-usdt-rate';
+import { validateInputErrors } from './middleware';
 
 const router = Router();
 
@@ -124,6 +124,8 @@ router.get(
             // Structure the response
             res.status(200).json({
                 data: [transactions],
+                totalETH: transactions.feeInETH,
+                totalUSDT: transactions.feeInUSDT,
                 pagination: {
                     page: 1,
                     pageSize: 1,
