@@ -18,6 +18,9 @@ describe('HistoryTxns API Endpoints', async () => {
             expect(Array.isArray(response.body.data)).toBe(true);
             expect(response.body.data.length).toBeGreaterThanOrEqual(0); // Depending on seeded data
 
+            expect(response.body).toHaveProperty('totalUSDT');
+            expect(response.body).toHaveProperty('totalETH');
+
             expect(response.body).toHaveProperty('pagination');
             expect(response.body.pagination).toHaveProperty('page', 1);
             expect(response.body.pagination).toHaveProperty('pageSize', 50);

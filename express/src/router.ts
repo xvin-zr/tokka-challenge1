@@ -3,6 +3,7 @@ import { param, query } from 'express-validator';
 import { validateInputErrors } from './middleware';
 import fetchBatchTxns from './api/fetch-batch-txns';
 import db from './db';
+import fetchUSDTRateAtTimestamp, { BINANCE_API_URL } from './api/fetch-usdt-rate';
 
 const router = Router();
 
@@ -69,8 +70,21 @@ router.get(
             const stmt = db.prepare(sql);
             const transactions = stmt.all(...params) as Txn[];
 
+            // Calculate total fees in USDT and ETH
+            const feeStmt = db.prepare(
+                `SELECT SUM(feeInUSDT) as totalUSDTFee, SUM(feeInETH) as totalETHFee FROM transactions WHERE timeStamp BETWEEN ? AND ?`
+            );
+            const fees = feeStmt.get(startTime, endTimeTs) as {
+                totalUSDTFee: number | null;
+                totalETHFee: number | null;
+            };
+            const totalUSDTFee = fees.totalUSDTFee ?? 0;
+            const totalETHFee = fees.totalETHFee ?? 0;
+
             res.status(200).json({
                 data: transactions,
+                totalUSDT: totalUSDTFee,
+                totalETH: totalETHFee,
                 pagination: {
                     page,
                     pageSize: limit,
@@ -124,6 +138,23 @@ router.get(
         }
     },
 );
+
+router.get('/realtime-eth-usdt', async function (_, res) {
+    try {
+        const resp = await fetch(`${BINANCE_API_URL}?symbol=ETHUSDT&interval=1m&limit=1`).then(res => res.json());
+
+        if (!resp || resp.length === 0) {
+            throw new Error('No price data available for the given timestamp.');
+        }
+
+        const price = parseFloat(resp[0][4]); // Close price of the candle
+
+        res.json({data: price})
+    } catch (err) {
+        res.status(500).json({ error: 'Internal Server Error' });
+        throw new Error(`Error fetching ETH price: ${err}`);
+    }
+})
 
 router.get(
     '/batch-txns',

@@ -1,4 +1,4 @@
-const BINANCE_API_URL = 'https://api.binance.com/api/v3/klines';
+export const BINANCE_API_URL = 'https://api.binance.com/api/v3/klines';
 
 // In-memory cache to store ETH prices to minimize API calls
 const usdtRateCache = new Map<number, number>();
