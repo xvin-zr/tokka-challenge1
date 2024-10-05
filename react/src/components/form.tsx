@@ -31,7 +31,6 @@ function Form({ setHash }: FormProps) {
       `?start=${Math.floor(start)}&end=${Math.floor(end)}&page=${1}&pageSize=${pageSize}`,
     );
     window.dispatchEvent(new Event('locationchange'));
-    // mutation.mutate({ start, end, page, pageSize, hash });
   }
 
   return (
