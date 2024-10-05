@@ -20,3 +20,7 @@ Testing:
 ```bash
 pnpm run test
 ```
+
+## APIs
+
+Check `/src/router.ts` for API documentation.

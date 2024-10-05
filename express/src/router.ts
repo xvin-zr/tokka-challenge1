@@ -10,6 +10,29 @@ const router = Router();
 const DEFAULT_LIMIT = 50;
 const ONE_MONTH_SECONDS = 30 * 24 * 60 * 60; // Approximate seconds in a month
 
+/**
+ * Endpoint: GET /history-txns
+ * Description: Retrieves a list of transactions within a specified time range.
+ * 
+ * Query Parameters:
+ * - start (optional): Starting timestamp (Unix timestamp in seconds)
+ * - end (optional): Ending timestamp (Unix timestamp in seconds)
+ * - page (optional): Page number for pagination (default: 1)
+ * - pageSize (optional): Number of items per page (default: 10, min: 10)
+ * 
+ * Response:
+ * {
+ *   data: [{ transaction details }],
+ *   totalUSDT: number,
+ *   totalETH: number,
+ *   pagination: {
+ *     page: number,
+ *     pageSize: number,
+ *     total: number,
+ *     totalPages: number
+ *   }
+ * }
+ */
 router.get(
     '/history-txns',
     query('start').optional().isInt({ min: 0 }),
@@ -100,6 +123,26 @@ router.get(
     },
 );
 
+/**
+ * Endpoint: GET /history-txns/:hash
+ * Description: Retrieves a specific transaction by its hash.
+ * 
+ * Path Parameters:
+ * - hash: Transaction hash (hexadecimal)
+ * 
+ * Response:
+ * {
+ *   data: [{ transaction details }],
+ *   totalETH: number,
+ *   totalUSDT: number,
+ *   pagination: {
+ *     page: 1,
+ *     pageSize: 1,
+ *     total: 1,
+ *     totalPages: 1
+ *   }
+ * }
+ */
 router.get(
     '/history-txns/:hash',
     param('hash').isHexadecimal().notEmpty(),
@@ -141,6 +184,15 @@ router.get(
     },
 );
 
+/**
+ * Endpoint: GET /realtime-eth-usdt
+ * Description: Retrieves the current ETH/USDT price.
+ * 
+ * Response:
+ * {
+ *   data: number // Current ETH/USDT price
+ * }
+ */
 router.get('/realtime-eth-usdt', async function (_, res) {
     try {
         const resp = await fetch(`${BINANCE_API_URL}?symbol=ETHUSDT&interval=1m&limit=1`).then(res => res.json());
@@ -158,6 +210,20 @@ router.get('/realtime-eth-usdt', async function (_, res) {
     }
 })
 
+/**
+ * Endpoint: GET /batch-txns
+ * Description: Retrieves a batch of transactions within a specified time range.
+ * 
+ * Query Parameters:
+ * - start (required): Starting timestamp (Unix timestamp in seconds)
+ * - end (required): Ending timestamp (Unix timestamp in seconds)
+ * - page (optional): Page number for pagination (default: 1)
+ * 
+ * Response:
+ * {
+ *   txns: [{ transaction details }]
+ * }
+ */
 router.get(
     '/batch-txns',
     query('start').isInt().notEmpty(),
