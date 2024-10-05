@@ -1,0 +1,13 @@
+services:
+  api:
+    build: express
+    ports:
+      - "3003:3003"
+  web:
+    build: react
+    environment:
+      - VITE_API_URL=http://api:3003
+    ports:
+      - "4173:80"
+    depends_on:
+      - api
