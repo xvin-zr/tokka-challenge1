@@ -30,15 +30,28 @@ export function getTimestampInSec(
     return timestamp;
 }
 
+/**
+ * Calculates the start and end timestamps based on the provided start and end parameters.
+ * If the start parameter is not provided or is invalid, it defaults to 30 days ago.
+ * If the end parameter is not provided or is invalid, it defaults to the current timestamp.
+ *
+ * @param startParam - The start parameter as a string or null.
+ * @param endParam - The end parameter as a string or null.
+ * @returns An object containing the start and end timestamps.
+ */
 export function getParamsTimestamp(
     startParam: string | null,
     endParam: string | null,
 ) {
+    // Calculate the start timestamp
     const start =
         Number(startParam ?? 0) ||
         Math.floor(Date.now() / 1000 - 30 * 24 * 60 * 60);
+
+    // Calculate the end timestamp
     const end = Number(endParam ?? 0) || Math.floor(Date.now() / 1000);
 
+    // Return an object containing the start and end timestamps
     return {
         start,
         end,
