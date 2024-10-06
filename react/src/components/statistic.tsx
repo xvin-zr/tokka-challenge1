@@ -1,39 +1,18 @@
 import fetchRealtimeETHUSDT from '@/api/fetch-realtime-eth-usdt';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 
 type StatisticProps = {
   totalETH: number;
   totalUSDT: number;
 };
 function Statistic({ totalETH, totalUSDT }: StatisticProps) {
-  const queryClient = useQueryClient();
   const query = useQuery({
     queryKey: ['statistic'],
     queryFn: fetchRealtimeETHUSDT,
-    staleTime: 100,
+    staleTime: 4000,
+    refetchInterval: 5000, // this can be improved with web socket
   });
   const price = query.data;
-
-  useEffect(() => {
-    let nextTimeToTick = Date.now();
-    function nextAnimationFrame() {
-      const now = Date.now();
-
-      if (nextTimeToTick <= now) {
-        queryClient.invalidateQueries({ queryKey: ['statistic'] });
-        nextTimeToTick = now + 5 * 1000;
-      }
-
-      requestAnimationFrame(nextAnimationFrame);
-    }
-
-    const reqId = requestAnimationFrame(nextAnimationFrame);
-
-    return () => {
-      cancelAnimationFrame(reqId);
-    };
-  }, [queryClient]);
 
   return (
     <dl className="space-y-4 px-1 pt-2 text-zinc-600">

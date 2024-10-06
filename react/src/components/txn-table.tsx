@@ -10,8 +10,8 @@ import {
 import useSearchParams from '@/hooks/use-search-params';
 import { getParamsTimestamp } from '@/utils/get-timestamp-in-sec';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import Pagination from './pagination';
 import { useEffect } from 'react';
+import Pagination from './pagination';
 
 type TxnTableProps = {
   hash: string | undefined;
@@ -63,7 +63,12 @@ export default function TxnTable({
   return (
     <>
       <div className="flex w-full justify-between">
-        <h2 className="text-xl font-bold">Transactions <span className='text-sm font-normal text-zinc-500 ml-4'>Found {data.total} records.</span></h2>
+        <h2 className="text-xl font-bold">
+          Transactions{' '}
+          <span className="ml-4 text-sm font-normal text-zinc-500">
+            Found {data.total} records.
+          </span>
+        </h2>
         <Pagination page={data.page} totalPages={data.totalPages} />
       </div>
       <Table>

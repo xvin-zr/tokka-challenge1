@@ -1,9 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from 'react';
 import './App.css';
 import Form from './components/form';
-import TxnTable from './components/txn-table';
-import { useState } from 'react';
 import Statistic from './components/statistic';
+import TxnTable from './components/txn-table';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ function App() {
           />
         </section>
       </main>
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }
